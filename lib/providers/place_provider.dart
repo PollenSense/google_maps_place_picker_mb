@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator_android/geolocator_android.dart';
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/src/models/pick_result.dart';
 import 'package:google_maps_place_picker_mb/src/place_picker.dart';
@@ -46,7 +48,8 @@ class PlaceProvider extends ChangeNotifier {
     LocationPermission permission;
 
     // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    serviceEnabled =
+        await GeolocatorPlatform.instance.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
@@ -58,9 +61,9 @@ class PlaceProvider extends ChangeNotifier {
       return Future.error('Location services are disabled.');
     }
 
-    permission = await Geolocator.checkPermission();
+    permission = await GeolocatorPlatform.instance.checkPermission();
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+      permission = await GeolocatorPlatform.instance.requestPermission();
       if (permission == LocationPermission.denied) {
         // Permissions are denied, next time you could try
         // requesting permissions again (this is also where
@@ -85,8 +88,16 @@ class PlaceProvider extends ChangeNotifier {
           'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    _currentPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: desiredAccuracy ?? LocationAccuracy.best,
+    final settings = defaultTargetPlatform == TargetPlatform.android
+        ? AndroidSettings(
+            accuracy: desiredAccuracy ?? LocationAccuracy.best,
+          )
+        : LocationSettings(
+            accuracy: desiredAccuracy ?? LocationAccuracy.best,
+          );
+
+    _currentPosition = await GeolocatorPlatform.instance.getCurrentPosition(
+      locationSettings: settings,
     );
   }
 

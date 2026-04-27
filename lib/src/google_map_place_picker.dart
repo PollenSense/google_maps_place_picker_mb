@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
@@ -474,7 +474,7 @@ class GoogleMapPlacePicker extends StatelessWidget {
   Widget _buildSelectionDetails(BuildContext context, PickResult result) {
     bool canBePicked = pickArea == null ||
         pickArea!.radius <= 0 ||
-        Geolocator.distanceBetween(
+        GeolocatorPlatform.instance.distanceBetween(
                 pickArea!.center.latitude,
                 pickArea!.center.longitude,
                 result.geometry!.location.lat,

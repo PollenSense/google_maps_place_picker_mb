@@ -1,3 +1,7 @@
+## [3.2.1] - 27/Apr/2026
+
+- Remove the stale direct `package_info_plus` dependency and widen `google_api_headers` so consuming apps can resolve `package_info_plus` 10.x on newer Flutter versions.
+
 ## [3.1.2] - 13/Sep/2023
 
 - Fix potential crash on hesitant camera movements #67
